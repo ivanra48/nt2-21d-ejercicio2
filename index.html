@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Ejemplo 1</title>
+    <title>NT2 Ivan Ramis - YA21D</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -12,11 +12,18 @@
 
 </head>
 
-
 <div class="container-fluid mt-3" id="app">
-    <input type="text" class="form-control" v-model="criterioDeBusqueda"
-        placeholder="Ingresar un criterio de busqueda...">
-    <br>
+    <input type="text" class="form-control col-12 m-1" v-model="criterioDeBusqueda" placeholder="Ingresar un criterio de busqueda...">
+    <div class="input-group">
+        <input type="text" class="form-control col-6 m-1" v-model="busquedaPorNombre" placeholder="Ingrese nombre a buscar">
+    <input type="number" class="form-control col-6 m-1" v-model="busquedaPorDNI" placeholder="Ingrese DNI a buscar">
+    </div>
+    <br> 
+    <div class="row" v-if="alertaCaracteres">
+        <div class="col-12">
+            <div class="alert alert-danger">Debe ingresar al menos 3 caracteres</div>
+        </div>
+    </div>
     <div class="card-deck m-0">
         <div class="row">
             <div class="col" v-for="persona in personasFiltradas">
@@ -40,6 +47,8 @@
         el: '#app',
         data: {
             criterioDeBusqueda: '',
+            busquedaPorNombre: '',
+            busquedaPorDNI: '',
             //Aquí, en este array es donde tienen que agregar su información
             personas: [
                 {
@@ -166,11 +175,20 @@
 
         },
         computed: {
-            personasFiltradas() {
+             personasFiltradas() {
                 return this.personas.filter((persona) => {
                     let registroCompleto = `${persona.nombre} ${persona.apellido} ${persona.dni} ${persona.correo}`
-                    return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase())
-                });
+                    let nombre = `${persona.nombre}`
+                    let dni = `${persona.dni}`                              
+
+                return registroCompleto.toLowerCase().includes(this.criterioDeBusqueda.toLowerCase()) &&
+                nombre.toLowerCase().includes(this.busquedaPorNombre.toLowerCase()) && dni.includes(this.busquedaPorDNI)
+            });
+            },
+
+            alertaCaracteres(){
+
+                return this.busquedaPorNombre.length < 3 && this.busquedaPorDNI.length < 3 && (this.busquedaPorNombre.length > 0 || this.busquedaPorDNI.length > 0)
             }
         },
         methods: {
